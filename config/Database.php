@@ -4,13 +4,18 @@ class Database {
 
     public static function getConnection() {
         if (!self::$conn) {
-            $env = parse_ini_file(__DIR__ . '/../config.env.php');
+            $config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/config/config.env.php");
 
-            $host = $env['DB_HOST'];
-            $db   = $env['DB_NAME'];
-            $user = $env['DB_USER'];
-            $pass = $env['DB_PASS'];
+            if (!$config) {
+                die("No se pudo cargar el archivo de configuración.");
+            }
 
+            $host = $config['DB_HOST'];
+            $db   = $config['DB_NAME'];
+            $user = $config['DB_USER'];
+            $pass = $config['DB_PASS'];
+
+            // Crear conexión
             self::$conn = new mysqli($host, $user, $pass, $db);
             if (self::$conn->connect_error) {
                 die("Conexión fallida: " . self::$conn->connect_error);
