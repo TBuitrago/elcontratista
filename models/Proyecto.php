@@ -9,21 +9,20 @@ class Proyecto {
     }
 
     public function obtenerTodos() {
-        $stmt = $this->conn->query("SELECT * FROM proyectos");
+        $stmt = $this->conn->query("SELECT * FROM PROYECTO");
         return $stmt->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function filtrarPorCategoria($idCategoria) {
-        $stmt = $this->conn->prepare(
-            "SELECT p.*
-             FROM proyectos p
-             JOIN proyectos_categorias pc ON p.id = pc.id_proyecto
-             WHERE pc.id_categoria = ?"
-        );
-        $stmt->bind_param("s", $idCategoria);
+    public function filtrarPorCategoria($categoria) {
+        $stmt = $this->conn->prepare("
+            SELECT P.* FROM PROYECTO P
+            JOIN PROYECTO_CATEGORIA PC ON P.ID_PROYECTO = PC.PROYECTO_ID
+            JOIN CATEGORIA C ON C.ID_CATEGORIA = PC.CATEGORIA_ID
+            WHERE C.NOMBRE = ?
+        ");
+        $stmt->bind_param("s", $categoria);
         $stmt->execute();
         $result = $stmt->get_result();
-
         $proyectos = [];
         while ($row = $result->fetch_assoc()) {
             $proyectos[] = $row;

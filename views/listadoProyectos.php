@@ -1,22 +1,12 @@
 <?php
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once '../models/Proyecto.php';
+$proyecto = new Proyecto();
 
-try {
-    $proyecto = new Proyecto();
-    $proyectos = [];
-
-    if (isset($_GET['categoria']) && $_GET['categoria'] !== '') {
-        $proyectos = $proyecto->filtrarPorCategoria($_GET['categoria']);
-    } else {
-        $proyectos = $proyecto->obtenerTodos();
-    }
-} catch (Exception $e) {
-    die("<p style='color:red;'>Error: " . $e->getMessage() . "</p>");
-}
+$categoria = $_GET['categoria'] ?? null;
+$proyectos = $categoria ? $proyecto->filtrarPorCategoria($categoria) : $proyecto->obtenerTodos();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,23 +15,33 @@ try {
     <title>Listado de Proyectos</title>
 </head>
 <body>
-    <h1>Proyectos Disponibles</h1>
+    <h1>Proyectos disponibles</h1>
     <form method="GET" action="">
-        <label for="categoria">Filtrar por tipo de proyecto:</label>
+        <label for="categoria">Filtrar por categoría:</label>
         <select name="categoria" id="categoria">
-            <option value="">-- Selecciona una categoría --</option>
-            <option value="cat-piscinas">Piscinas</option>
-            <option value="cat-remodelaciones">Remodelaciones</option>
-            <option value="cat-techos">Techos</option>
+            <option value="">-- Todas --</option>
+            <option value="Piscinas">Piscinas</option>
+            <option value="Patios Residenciales">Patios Residenciales</option>
         </select>
         <button type="submit">Filtrar</button>
     </form>
-    <hr>
-    <?php foreach ($proyectos as $p): ?>
-        <h3><?= htmlspecialchars($p['titulo']) ?></h3>
-        <p><?= htmlspecialchars($p['descripcion']) ?></p>
-        <p><strong>Ubicación:</strong> <?= htmlspecialchars($p['ubicacion']) ?></p>
-        <hr>
-    <?php endforeach; ?>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Título</th>
+            <th>Cliente</th>
+            <th>Descripción</th>
+            <th>Presupuesto</th>
+            <th>Categoría</th>
+        </tr>
+        <?php foreach ($proyectos as $p): ?>
+        <tr>
+            <td><?= htmlspecialchars($p['TITULO']) ?></td>
+            <td><?= htmlspecialchars($p['CLIENTE_ID']) ?></td>
+            <td><?= htmlspecialchars($p['DESCRIPCION']) ?></td>
+            <td><?= number_format($p['PRESUPUESTO'], 0, ',', '.') ?> USD</td>
+            <td><?= htmlspecialchars($categoria ?? 'Todas') ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
 </body>
 </html>
