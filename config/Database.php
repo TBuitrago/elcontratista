@@ -3,7 +3,7 @@ class Database {
     private static $host = 'localhost';
     private static $dbName = 'u729801655_elcontratista';
     private static $username = 'u729801655_tomas';
-    private static $password = 'BDDELCONTRATISTA2025med@OO';
+    private static $password = 'ElContratista2025$Secure';
     private static $conn;
 
     public static function getConnection() {
