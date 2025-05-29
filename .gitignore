@@ -1,0 +1,14 @@
+# Evitar archivos sensibles
+/config/Database.php
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Editor y OS
+.vscode/
+*.log
+
+# Archivos temporales
+*.bak
+*.tmp
