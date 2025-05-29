@@ -1,10 +1,9 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
 require_once __DIR__ . '/../models/Proyecto.php';
-$proyecto = new Proyecto();
 
+$proyecto = new Proyecto();
 $categoria = $_GET['categoria'] ?? null;
 $proyectos = $categoria ? $proyecto->filtrarPorCategoria($categoria) : $proyecto->obtenerTodos();
 ?>
@@ -12,36 +11,104 @@ $proyectos = $categoria ? $proyecto->filtrarPorCategoria($categoria) : $proyecto
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Listado de Proyectos</title>
+    <title>Proyectos Disponibles</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #2c7be5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1a5fb4;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .card p {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .card .label {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Proyectos disponibles</h1>
+    <h1>Proyectos Disponibles</h1>
+
     <form method="GET" action="">
         <label for="categoria">Filtrar por categoría:</label>
         <select name="categoria" id="categoria">
             <option value="">-- Todas --</option>
-            <option value="Piscinas">Piscinas</option>
-            <option value="Patios Residenciales">Patios Residenciales</option>
+            <option value="Piscinas" <?= $categoria === 'Piscinas' ? 'selected' : '' ?>>Piscinas</option>
+            <option value="Patios Residenciales" <?= $categoria === 'Patios Residenciales' ? 'selected' : '' ?>>Patios Residenciales</option>
         </select>
         <button type="submit">Filtrar</button>
     </form>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>Título</th>
-            <th>Cliente</th>
-            <th>Descripción</th>
-            <th>Presupuesto</th>
-            <th>Categoría</th>
-        </tr>
+
+    <div class="cards">
         <?php foreach ($proyectos as $p): ?>
-        <tr>
-            <td><?= htmlspecialchars($p['TITULO']) ?></td>
-            <td><?= htmlspecialchars($p['CLIENTE_ID']) ?></td>
-            <td><?= htmlspecialchars($p['DESCRIPCION']) ?></td>
-            <td><?= number_format($p['PRESUPUESTO'], 0, ',', '.') ?> USD</td>
-            <td><?= htmlspecialchars($categoria ?? 'Todas') ?></td>
-        </tr>
+        <div class="card">
+            <h3><?= htmlspecialchars($p['TITULO']) ?></h3>
+            <p><span class="label">Cliente:</span> <?= htmlspecialchars($p['CLIENTE_ID']) ?></p>
+            <p><span class="label">Descripción:</span> <?= htmlspecialchars($p['DESCRIPCION']) ?></p>
+            <p><span class="label">Presupuesto:</span> $<?= number_format($p['PRESUPUESTO'], 0, ',', '.') ?> USD</p>
+            <p><span class="label">Estado:</span> <?= htmlspecialchars($p['ESTADO']) ?></p>
+        </div>
         <?php endforeach; ?>
-    </table>
+    </div>
 </body>
 </html>
