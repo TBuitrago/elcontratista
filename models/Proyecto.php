@@ -1,12 +1,11 @@
 <?php
-require_once '../config/Database.php';
+require_once __DIR__ . '/../config/Database.php';
 
 class Proyecto {
     private $conn;
 
     public function __construct() {
-        $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = Database::getConnection();
     }
 
     public function obtenerTodos() {
