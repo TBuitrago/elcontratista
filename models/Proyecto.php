@@ -1,40 +1,34 @@
 <?php
-require_once __DIR__ . '/../config/Database.php';
+require_once '../config/Database.php';
 
 class Proyecto {
-    public $idProyecto;
-    public $titulo;
-    public $descripcion;
-    public $idCategoria;
-    public $ubicacion;
-    public $estado;
+    private $conn;
 
-    public static function obtenerProyectosDisponibles($idCategoria = null) {
-        $conn = Database::getConnection();
+    public function __construct() {
+        $database = new Database();
+        $this->conn = $database->getConnection();
+    }
 
-        if ($idCategoria) {
-            $stmt = $conn->prepare("SELECT * FROM proyectos WHERE idCategoria = ? AND estado = 'publicado'");
-            $stmt->bind_param("i", $idCategoria);
-        } else {
-            $stmt = $conn->prepare("SELECT * FROM proyectos WHERE estado = 'publicado'");
-        }
+    public function obtenerTodos() {
+        $stmt = $this->conn->query("SELECT * FROM proyectos");
+        return $stmt->fetch_all(MYSQLI_ASSOC);
+    }
 
+    public function filtrarPorCategoria($idCategoria) {
+        $stmt = $this->conn->prepare(
+            "SELECT p.*
+             FROM proyectos p
+             JOIN proyectos_categorias pc ON p.id = pc.id_proyecto
+             WHERE pc.id_categoria = ?"
+        );
+        $stmt->bind_param("s", $idCategoria);
         $stmt->execute();
         $result = $stmt->get_result();
+
         $proyectos = [];
-
         while ($row = $result->fetch_assoc()) {
-            $proyecto = new Proyecto();
-            $proyecto->idProyecto = $row['idProyecto'];
-            $proyecto->titulo = $row['titulo'];
-            $proyecto->descripcion = $row['descripcion'];
-            $proyecto->idCategoria = $row['idCategoria'];
-            $proyecto->ubicacion = $row['ubicacion'];
-            $proyecto->estado = $row['estado'];
-            $proyectos[] = $proyecto;
+            $proyectos[] = $row;
         }
-
-        $stmt->close();
         return $proyectos;
     }
 }
