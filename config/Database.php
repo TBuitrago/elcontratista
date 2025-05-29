@@ -1,14 +1,17 @@
 <?php
 class Database {
-    private static $host = 'localhost';
-    private static $dbName = 'u729801655_elcontratista';
-    private static $username = 'u729801655_tomas';
-    private static $password = 'ElContratista2025$Secure';
     private static $conn;
 
     public static function getConnection() {
         if (!self::$conn) {
-            self::$conn = new mysqli(self::$host, self::$username, self::$password, self::$dbName);
+            $env = parse_ini_file(__DIR__ . '/../config.env.php');
+
+            $host = $env['DB_HOST'];
+            $db   = $env['DB_NAME'];
+            $user = $env['DB_USER'];
+            $pass = $env['DB_PASS'];
+
+            self::$conn = new mysqli($host, $user, $pass, $db);
             if (self::$conn->connect_error) {
                 die("Conexión fallida: " . self::$conn->connect_error);
             }
