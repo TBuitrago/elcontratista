@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/Database.php';
+require_once '../config/Database.php';
 
 class Proyecto {
     private $conn;
@@ -8,25 +8,58 @@ class Proyecto {
         $this->conn = Database::getConnection();
     }
 
-    public function obtenerTodos() {
-        $stmt = $this->conn->query("SELECT * FROM PROYECTO");
-        return $stmt->fetch_all(MYSQLI_ASSOC);
+    public function getAllByCliente($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM proyectos WHERE cliente_id = ?");
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function filtrarPorCategoria($categoria) {
-        $stmt = $this->conn->prepare("
-            SELECT P.* FROM PROYECTO P
-            JOIN PROYECTO_CATEGORIA PC ON P.ID_PROYECTO = PC.PROYECTO_ID
-            JOIN CATEGORIA C ON C.ID_CATEGORIA = PC.CATEGORIA_ID
-            WHERE C.NOMBRE = ?
-        ");
+    public function getPublicado() {
+        $query = "SELECT * FROM proyectos WHERE estado = 'Publicado'";
+        return $this->conn->query($query)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function filterByCategoria($categoria) {
+        $stmt = $this->conn->prepare("SELECT p.* FROM proyectos p JOIN proyectos_categorias pc ON p.id = pc.id_proyecto WHERE pc.id_categoria = ?");
         $stmt->bind_param("s", $categoria);
         $stmt->execute();
-        $result = $stmt->get_result();
-        $proyectos = [];
-        while ($row = $result->fetch_assoc()) {
-            $proyectos[] = $row;
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getById($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM proyectos WHERE id = ?");
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function update($dto) {
+        try {
+            $this->conn->begin_transaction();
+            $stmt = $this->conn->prepare("UPDATE proyectos SET titulo=?, descripcion=?, presupuesto=?, estado=? WHERE id=?");
+            $stmt->bind_param("ssdss", $dto->titulo, $dto->descripcion, $dto->presupuesto, $dto->estado, $dto->id);
+            $stmt->execute();
+            $this->conn->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            return false;
         }
-        return $proyectos;
+    }
+
+    public function delete($id) {
+        try {
+            $this->conn->begin_transaction();
+            $stmt = $this->conn->prepare("DELETE FROM proyectos WHERE id = ?");
+            $stmt->bind_param("s", $id);
+            $stmt->execute();
+            $this->conn->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            return false;
+        }
     }
 }
+?>
