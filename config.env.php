@@ -1,0 +1,4 @@
+DB_HOST=localhost
+DB_NAME=u729801655_elcontratista
+DB_USER=u729801655_tomas
+DB_PASS=ElContratista2025$Secure

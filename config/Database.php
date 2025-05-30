@@ -4,7 +4,7 @@ class Database {
 
     public static function getConnection() {
         if (!self::$conn) {
-            $env = parse_ini_file(__DIR__ . "/../config.env.php");
+            $env = parse_ini_file(__DIR__ . '/../config.env.php');
             $host = $env['DB_HOST'];
             $db   = $env['DB_NAME'];
             $user = $env['DB_USER'];
@@ -17,4 +17,3 @@ class Database {
         return self::$conn;
     }
 }
-?>

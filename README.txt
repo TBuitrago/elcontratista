@@ -1,10 +1,6 @@
-Proyecto: ElContratista - Plataforma de gestión de proyectos de construcción
+1. Sube todo el contenido del ZIP a tu hosting (por ejemplo en public_html).
+2. Asegúrate de tener creado un archivo `config.env.php` en la raíz con las credenciales correctas.
+3. Accede a /views/listadoProyectos.php para ver la lista de proyectos.
+4. Puedes ajustar las categorías, agregar nuevos métodos, etc.
 
-Instrucciones:
-1. Suba todo el contenido del ZIP a su servidor Hostinger.
-2. Asegúrese de crear la base de datos y tablas según el archivo esquema.sql incluido.
-3. Modifique 'config/config.env.php' si cambian sus credenciales de conexión.
-4. Acceda a:
-   - /views/proyectos_cliente.php para CRUD como Cliente
-   - /views/proyectos_contratista.php para vista filtrable como Contratista
-   - /probar_conexion.php para verificar la conexión a la base de datos
+¡El sistema ya debería estar funcionando!
